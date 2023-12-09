@@ -11,18 +11,45 @@ File architectire :
 title: Pipeline Steps
 ---
 
-graph TD
+flowchart TB
+    
+    subgraph Sources
+        tripdatacsv["./bike-rental-starter-kit/data/JC-2016-{n}-citibike-tripdata.csv"]
+        weathercsv["./bike-rental-starter-kit/data/newark_airport_2016.csv"]
+    end
 
-    tripdatacsv["./bike-rental-starter-kit/data/JC-2016-{n}-citibike-tripdata.csv"] --> |"read_csv x12"| Pandas["Pandas \n Exploring & Cleaning"] 
-    PostGres -->|Creating| fact_trip
+    tripdatacsv --> |"read_csv x12"| td_raw
+    weathercsv --> |"read_csv x1"| wd_raw 
 
-    weathercsv["./bike-rental-starter-kit/data/newark_airport_2016.csv"] --> |"read_csv x1"| Pandas["Pandas \n Exploring & Cleaning"] 
-    Pandas -->|Loading| PostGres
-    PostGres -->|Creating| fact_weather
+    td_raw -.-> |"Wrangling & Cleaning"| td_clean
+    wd_raw -.-> |"Wrangling & Cleaning"| wd_clean
+
+    subgraph Pandas
+        td_raw["tripdata (raw)"]
+        wd_raw["weather (raw)"]
+        td_clean["tripdata (clean)"]
+        wd_clean["weather (clean)"]
+    end
+
+    wd_clean --> |"Loading into"| fact_weather
+    td_clean --> |"Loading into"| fact_trip
+
+    subgraph PostgreSQL
+        fact_trip
+        fact_weather
+        dim_bike
+        dim_station
+    end
 
     fact_trip --> dim_bike & dim_station
     fact_weather -.-> |Could enrich| dim_station
 
+    fact_trip & fact_weather & dim_bike & dim_station --> Exposures
+
+    subgraph Exposures
+        Analytics_Dashboard
+    end
+    
 ```
 
 ## RDB Schema
