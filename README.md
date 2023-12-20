@@ -70,7 +70,7 @@ Ensure that the views provide meaningful insights into the relationship between 
 
 4. UUID Generation:
 
-Created a new 'Ride ID' column using UUIDs, which will be used as a primary key of `fact_trip` in PostgreSQL database.
+* Created a new 'Ride ID' column using UUIDs, which will be used as a primary key of `fact_trip` in PostgreSQL database.
 
 ### Weather
 
